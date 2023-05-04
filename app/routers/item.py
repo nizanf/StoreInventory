@@ -5,6 +5,7 @@ from app.database import ItemCol
 from app.models.itemSerializer import itemEntity, itemListEntity
 from typing_extensions import Annotated
 from fastapi.encoders import jsonable_encoder
+
 router = APIRouter()
 
 
@@ -31,6 +32,8 @@ def get_item(name):
             return itemEntity(item)
     except: 
         raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST)
+    raise HTTPException(status_code = status.HTTP_404_NOT_FOUND)
+
 
 @router.post('/create_item', status_code=status.HTTP_201_CREATED)
 def create_item(item: Annotated[
@@ -45,10 +48,10 @@ def create_item(item: Annotated[
                     ),
                 ],):
    
-    json_item = jsonable_encoder(item)
     try:
-        ItemCol.insert_one(jsonable_encoder(json_item))  
-        results = {"item": json_item}
+        # json_item = jsonable_encoder(item)
+        ItemCol.insert_one(jsonable_encoder(item))  
+        results = {"item": jsonable_encoder(item)}
     except: 
         raise HTTPException(status_code= status.HTTP_409_CONFLICT)
     
@@ -64,8 +67,22 @@ def update_item_Inventory(name: str, stock: int):
     return "update successfuly" 
 
 
+@router.delete('/delete_all')
+def delete_all():
+    try:
+        ItemCol.delete_many({ })
+        print(str(get_all_items))
+        if not get_all_items:
+            return "bad"
+        return "ok"
+    except: 
+        raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST) 
+    
+
 @router.delete('/{name}')
 def delete_item(name):
     ItemCol.delete_one({"name" : name})
 
     return "deleted successfuly"
+
+

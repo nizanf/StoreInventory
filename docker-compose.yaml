@@ -35,8 +35,6 @@ networks:
   store:
     name: store
     driver: bridge
-    ipam:
-      driver: default
 
 volumes:
   store_db:

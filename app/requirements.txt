@@ -2,5 +2,5 @@ fastapi
 uvicorn
 pydantic
 pymongo
-mongoengine
+# mongoengine
 python-dotenv
